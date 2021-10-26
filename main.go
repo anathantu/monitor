@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/anathantu/monitor/config"
 	"github.com/anathantu/monitor/scrape"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -10,7 +11,7 @@ import (
 
 func main() {
 	var logger log.Logger
-
+	var cfgFile *config.Config
 	var (
 	//ctxScrape, cancelScrape = context.WithCancel(context.Background())
 	//discoveryManagerScrape  = discovery.NewManager(ctxScrape,
