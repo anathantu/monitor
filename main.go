@@ -1,8 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/anathantu/monitor/config"
-	"github.com/anathantu/monitor/scrape"
+	_ "github.com/anathantu/monitor/scrape"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 	"github.com/oklog/run"
@@ -12,6 +13,14 @@ import (
 func main() {
 	var logger log.Logger
 	var cfgFile *config.Config
+	var err error
+	filename := "monitor.yml"
+	if cfgFile, err = config.LoadFile(filename, log.NewNopLogger()); err != nil {
+		level.Error(logger).Log("msg", fmt.Sprintf("Error loading config (--config.file=%s)", filename), "err", err)
+		os.Exit(2)
+	}
+
+	level.Info(logger).Log("msg", fmt.Sprintf("monitor.yml  %s", cfgFile))
 	var (
 	//ctxScrape, cancelScrape = context.WithCancel(context.Background())
 	//discoveryManagerScrape  = discovery.NewManager(ctxScrape,
