@@ -4,10 +4,9 @@ global:
 
 scrape_configs:
   - job_name: "prometheus"
-#    static_configs:
-#      targets: [ "localhost:9090","localhost:9100" ]
+    static_configs:
+      targets: [ "localhost:9090","localhost:9100" ]
   - job_name: "vueblog"
     metrics_path: "/actuator/prometheus"
     static_configs:
-      targets:
-        - "localhost:8081"
+      targets: [ "localhost:8081" ]

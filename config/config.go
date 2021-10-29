@@ -183,8 +183,6 @@ type ScrapeConfig struct {
 	// The HTTP resource path on which to fetch metrics from targets.
 	MetricsPath string `yaml:"metrics_path,omitempty"`
 
-	// We cannot do proper Go type embedding below as the parser will then parse
-	// values arbitrarily into the overflow maps of further-down types.
 	StaticConfig StaticConfig `yaml:"static_configs,omitempty"`
 	// List of target relabel configurations.
 	//RelabelConfigs []*relabel.Config `yaml:"relabel_configs,omitempty"`
@@ -193,18 +191,21 @@ type ScrapeConfig struct {
 }
 
 type StaticConfig struct {
-	targets []string `yaml:"targets,omitempty"`
+	Targets []string `yaml:"targets,omitempty"`
 }
 
 // UnmarshalYAML implements the yaml.Unmarshaler interface.
-//func (c *ScrapeConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
-//	*c = DefaultScrapeConfig
-//	if err := discovery.UnmarshalYAMLWithInlineConfigs(c, unmarshal); err != nil {
-//		return err
-//	}
-//	if len(c.JobName) == 0 {
-//		return errors.New("job_name is empty")
-//	}
-//
-//	return nil
-//}
+func (c *ScrapeConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	sc := &ScrapeConfig{}
+	type plain ScrapeConfig
+	if err := unmarshal((*plain)(sc)); err != nil {
+		return err
+	}
+
+	if sc.MetricsPath == "" {
+		sc.MetricsPath = DefaultScrapeConfig.MetricsPath
+	}
+
+	*c = *sc
+	return nil
+}
